@@ -6,7 +6,6 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// app.use('/static', express.static('public'))
 app.use(express.static(path.join(process.cwd(), "public")));
 
 app.get("/demo", (req, res) => {
