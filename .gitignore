@@ -3,3 +3,4 @@ node_modules
 build
 logs/*
 !.keep
+./src/utils/makeTestFriends.ts
