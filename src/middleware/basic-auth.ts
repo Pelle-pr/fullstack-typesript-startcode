@@ -1,14 +1,19 @@
 import auth from "basic-auth";
-import compare from "tsscmp";
 
 import { Request, Response } from "express";
-import facade from "../facade/dummyDB-Facade";
+import Friendfacade from "../facade/friendFacade";
+
+let facade: Friendfacade;
 
 const authMiddleware = async function (
   req: Request,
   res: Response,
   next: Function
 ) {
+  if (!facade) {
+    facade = new Friendfacade(req.app.get("db"));
+  }
+
   var credentials = auth(req);
 
   if (credentials && (await check(credentials.name, credentials.pass, req))) {
@@ -20,10 +25,10 @@ const authMiddleware = async function (
   }
 };
 
-async function check(name: string, pass: string, req: any) {
-  const user = await facade.getFriend(name);
-  if (user && compare(pass, user.password)) {
-    req.credentials = { userName: user.email, role: "user" };
+async function check(email: string, pass: string, req: any) {
+  const verifiedUser = await facade.getVerifiedUser(email, pass);
+  if (verifiedUser) {
+    req.credentials = { email: verifiedUser.email, role: verifiedUser.role };
     return true;
   }
   return false;

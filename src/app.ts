@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import path from "path";
-import friendRoute from "./routes/FriendsRoute";
+import friendRoute from "./routes/FriendsRoutes";
 import { ApiError } from "./errors/apiError";
 import simplelog from "./middleware/simplelog";
 import logger, { stream } from "./middleware/logger";
