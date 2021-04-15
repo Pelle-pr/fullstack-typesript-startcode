@@ -22,7 +22,7 @@ router.post("/", async function (req, res, next) {
   try {
     let newFriend = req.body;
     const status = await facade.addFriend(newFriend);
-    res.json({ status });
+    res.json(status);
   } catch (err) {
     debug(err);
     if (err instanceof ApiError) {
@@ -69,7 +69,7 @@ router.put("/editme", async function (req: any, res, next) {
 router.get("/me", async (req: any, res, next) => {
   try {
     const email = req.credentials.email;
-    const friend = await facade.getFriend(email);
+    const friend = await facade.getFriendFromEmail(email);
 
     res.json(friend);
   } catch (err) {
@@ -89,7 +89,7 @@ router.get("/find-user/:email", async (req: any, res, next) => {
       throw new ApiError("Not Authorized", 401);
     }
     const email_ = req.params.email;
-    const friend = await facade.getFriend(email_);
+    const friend = await facade.getFriendFromEmail(email_);
     if (friend == null) {
       throw new ApiError("user not found", 404);
     }

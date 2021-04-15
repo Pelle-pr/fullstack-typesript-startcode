@@ -3,7 +3,7 @@ import d from "debug";
 import mongodb from "mongodb";
 const debug = d("www");
 const MongoError = mongodb.MongoError;
-
+import { setupFacade } from "../graphql/resolvers"
 import { DbConnector } from "../config/dbConnector";
 
 const PORT = process.env.PORT || 3333;
@@ -15,8 +15,11 @@ const PORT = process.env.PORT || 3333;
     app
       .get("logger")
       .log("info", `Connection to ${process.env.DB_NAME} established`);
+
     app.set("db", db);
     app.set("db-type", "REAL");
+
+    setupFacade(db)
 
     app.listen(PORT, () =>
       app

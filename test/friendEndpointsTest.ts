@@ -120,7 +120,7 @@ describe("### Describe the Friend Endpoints (/api/friends) ###", function () {
         .auth("pp@b.dk", "secret")
         .send(newPeter);
       expect(response.status).to.be.equal(200);
-      expect(response.body.modifiedCount).to.be.equal(1);
+      expect(response.body.firstName).to.be.equal("Poul");
       const theNewPeter = await friendCollection.findOne({ email: "pp@b.dk" });
       expect(theNewPeter.firstName).to.be.equal("Poul");
     });
@@ -137,7 +137,7 @@ describe("### Describe the Friend Endpoints (/api/friends) ###", function () {
         .get("/api/friends/find-user/dd@b.s")
         .auth("aa@a.dk", "secret");
       expect(response.status).to.be.equal(404);
-      expect(response.body.msg).to.be.equal("No friend found");
+      expect(response.body.msg).to.be.equal("User not found");
     });
 
     it("It should not let a non-admin user find Donald Duck", async () => {
@@ -161,7 +161,7 @@ describe("### Describe the Friend Endpoints (/api/friends) ###", function () {
         .put("/api/friends/pp@b.dk")
         .auth("aa@a.dk", "secret")
         .send(newPeter);
-      expect(response.body.modifiedCount).to.be.equal(1);
+      expect(response.body.firstName).to.be.equal("Poul");
 
       const theNewPeter = await friendCollection.findOne({ email: "pp@b.dk" });
       expect(theNewPeter.firstName).to.be.equal("Poul");

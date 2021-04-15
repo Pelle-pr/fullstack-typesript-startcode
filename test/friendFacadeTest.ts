@@ -64,7 +64,7 @@ describe("## Verify the Friends Facade ##", () => {
         password: "secret",
       };
       const status = await facade.addFriend(newFriend);
-      expect(status).to.be.not.null;
+      expect(status.id).to.not.be.null
       const jan = await friendCollection.findOne({ email: "jan@b.dk" });
       expect(jan.firstName).to.be.equal("Jan");
     });
@@ -128,11 +128,11 @@ describe("## Verify the Friends Facade ##", () => {
 
   describe("Verify the getFriend method", () => {
     it("It should find Donald Duck", async () => {
-      const dd = await facade.getFriend("dd@b.dk");
+      const dd = await facade.getFriendFromEmail("dd@b.dk");
       expect(dd.firstName).to.be.equal("Donald");
     });
     it("It should not find xxx.@.b.dk", async () => {
-      await expect(facade.getFriend("xxx.@.b.dk")).rejectedWith(ApiError);
+      await expect(facade.getFriendFromEmail("xxx.@.b.dk")).rejectedWith(ApiError);
     });
   });
 
