@@ -9,6 +9,13 @@ const typeDefs = `
         email: String
         role: String
     }
+    type AdminFriend {
+        id: ID
+        firstName: String
+        lastName: String
+        email: String
+        role: String
+    }
  
     """
     Queries available for Friends
@@ -37,7 +44,7 @@ const typeDefs = `
         """
         Get Friend by Email (Requires admin role)
         """
-        getFriendByEmail (email : String) : Friend
+        getFriendByEmail (email : String!) : AdminFriend
         
     }
     input FriendInput {
@@ -51,6 +58,11 @@ const typeDefs = `
         lastName: String
         email: String
         password: String
+    }
+    input AdminFriendEditInput {
+        firstName: String
+        lastName: String
+        email: String
     }
  
 
@@ -82,7 +94,7 @@ const typeDefs = `
         """
         Admin can edit everyone (Requires admin Role)
         """
-        adminEditFriend(input: FriendEditInput): Friend
+        adminEditFriend(input: AdminFriendEditInput): AdminFriend
        
     }
 `;

@@ -17,7 +17,8 @@ const app = express();
 app.use(express.json())
 
 //Cors
-app.use("/api", cors());
+app.use(cors());
+
 //My own middleware
 //app.use("/api", myCors);
 
@@ -39,7 +40,8 @@ import { schema } from './graphql/schema';
 
 import authMiddleware from "./middleware/basic-auth";
 import { assertWrappingType } from "graphql";
-//app.use("/graphql", authMiddleware);
+
+
 
 
 app.use("/graphql", (req, res, next) => {

@@ -25,21 +25,30 @@ export const resolvers = {
     Query: {
 
         getAllFriends: (root: any, _: any, context: any) => {
-            //TODO ADMIN AND USER ROLE IS ALLOWED 
-            if (!context.credentials.role || context.credentials.role !== "admin" || context.credentials.role !== "user") {
+
+            if (!context.credentials) {
                 throw new ApiError("Not Authorized", 401)
             }
 
             return friendFacade.getAllFriends()
 
         },
-        //TODO ADMIN AND USER ALLOWED
+
         getFriend: (root: any, _: any, context: any) => {
+            if (!context.credentials) {
+                throw new ApiError("Not Authorized", 401)
+            }
+
             return friendFacade.getFriendFromEmail(context.credentials.email)
         },
 
-        //TODO NEED ADMIN ROLE
+
         getFriendByEmail: async (_: object, { email }: { email: string }, context: any) => {
+
+            if (!context.credentials || context.credentials.role !== "admin") {
+                throw new ApiError("Not Authorized", 401)
+            }
+
             return friendFacade.getFriendFromEmail(email)
         },
 
@@ -65,15 +74,25 @@ export const resolvers = {
             return friendFacade.addFriend(input)
         },
         editFriend: async (_: object, { input }: { input: IFriend }, context: any) => {
-            //Check for credentials
+
+            if (!context.credentials) {
+                throw new ApiError("Not Authorized", 401)
+            }
+
             return friendFacade.editFriend(context.credentials.email, input)
         },
         deleteFriend: async (_: object, { email }: { email: string }, context: any) => {
-            //TODO Need admin rights!
+            if (!context.credentials || context.credentials.role !== "admin") {
+                throw new ApiError("Not Authorized", 401)
+            }
+
             return friendFacade.deleteFriend(email)
         },
-        adminEditFriend: async (_: object, { input }: { email: string, input: IFriend }) => {
-            //TODO NEED admin rights!
+        adminEditFriend: async (_: object, { input }: { email: string, input: IFriend }, context: any) => {
+
+            if (!context.credentials || context.credentials.role !== "admin") {
+                throw new ApiError("Not Authorized", 401)
+            }
 
             return friendFacade.editFriend(input.email, input)
         }
