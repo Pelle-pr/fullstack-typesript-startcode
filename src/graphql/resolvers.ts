@@ -1,7 +1,7 @@
 import FriendFacade from '../facade/friendFacade';
 import { IFriend } from '../interfaces/IFriend';
 import { ApiError } from '../errors/apiError';
-import { request, Request } from "express";
+import { Request } from "express";
 import fetch from "node-fetch"
 
 
@@ -50,6 +50,14 @@ export const resolvers = {
             }
 
             return friendFacade.getFriendFromEmail(email)
+        },
+        getFriendById: async (_: object, { id }: { id: string }, context: any) => {
+
+            if (!context.credentials || context.credentials.role !== "admin") {
+                throw new ApiError("Not Authorized", 401)
+            }
+
+            return friendFacade.getFriendFromId(id)
         },
 
 

@@ -66,9 +66,7 @@ describe("### Describe the Friend Endpoints (/api/friends) ###", function () {
 
     it("it should get a 401 when NOT authenticated", async () => {
       const response = await request.get("/api/friends/all");
-
       expect(response.status).to.be.equal(401);
-      expect(response.text).to.be.equal("Access denied");
     });
   });
 

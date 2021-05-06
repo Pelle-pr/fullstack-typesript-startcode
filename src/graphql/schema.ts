@@ -1,21 +1,16 @@
 import { makeExecutableSchema } from 'graphql-tools';
 import { resolvers } from './resolvers';
 
-const typeDefs = `
+const typeDefs = `#graphql
     type Friend {
         id: ID
         firstName: String
         lastName: String
         email: String
+        password: String
         role: String
     }
-    type AdminFriend {
-        id: ID
-        firstName: String
-        lastName: String
-        email: String
-        role: String
-    }
+ 
  
     """
     Queries available for Friends
@@ -44,10 +39,17 @@ const typeDefs = `
         """
         Get Friend by Email (Requires admin role)
         """
-        getFriendByEmail (email : String!) : AdminFriend
+        getFriendByEmail (email : String!) : Friend
+
+        """
+        Get Friend by ID (Requires admin role)
+        """
+        getFriendById (id : String!) : Friend
+
         
     }
     input FriendInput {
+        ID: String
         firstName: String!
         lastName: String!
         password: String!
@@ -59,11 +61,7 @@ const typeDefs = `
         email: String
         password: String
     }
-    input AdminFriendEditInput {
-        firstName: String
-        lastName: String
-        email: String
-    }
+   
  
 
   
@@ -94,7 +92,7 @@ const typeDefs = `
         """
         Admin can edit everyone (Requires admin Role)
         """
-        adminEditFriend(input: AdminFriendEditInput): AdminFriend
+        adminEditFriend(input: FriendEditInput): Friend
        
     }
 `;

@@ -4,3 +4,4 @@ build
 logs/*
 !.keep
 src/utils/makeTestFriends.ts
+src/utils/makeTestPositions.ts

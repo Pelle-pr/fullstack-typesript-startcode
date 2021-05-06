@@ -61,9 +61,7 @@ class FriendsFacade {
 
     const result = await this.friendCollection.findOneAndUpdate(
       { email },
-      {
-        $set: fieldsToUpdate
-      },
+      { $set: fieldsToUpdate },
       { returnOriginal: false }
     )
 
@@ -113,7 +111,6 @@ class FriendsFacade {
 
 
   async getFriendFromEmail(friendEmail: string): Promise<IFriend> {
-    console.log(friendEmail)
     return this.findOne({ email: friendEmail })
   }
 
@@ -124,7 +121,6 @@ class FriendsFacade {
    * @returns true if deleted otherwise false
    */
   async deleteFriend(friendEmail: string): Promise<boolean> {
-    console.log(friendEmail)
     const deleteUser = await this.friendCollection.deleteOne({ email: friendEmail });
 
     if (deleteUser.result.n == 0) {
