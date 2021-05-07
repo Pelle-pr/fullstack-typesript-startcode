@@ -10,7 +10,22 @@ const typeDefs = `#graphql
         password: String
         role: String
     }
- 
+    type Position {
+        lastUpdated: String
+        email: String
+        name: String
+        location: Point
+    }
+    type Point {
+        type: String!
+        coordinates: [Float]
+    }
+
+    type GameArea {
+        type: String!
+        coordinates: [[[Float]]]
+    }
+
  
     """
     Queries available for Friends
@@ -46,6 +61,10 @@ const typeDefs = `#graphql
         """
         getFriendById (id : String!) : Friend
 
+        """
+        Get Game Area
+        """
+        getGameArea: GameArea
         
     }
     input FriendInput {
@@ -61,6 +80,13 @@ const typeDefs = `#graphql
         email: String
         password: String
     }
+    input PositionInput {
+        email: String!
+        longitude: Float!
+        latitude: Float!
+    }
+  
+   
    
  
 
@@ -93,6 +119,19 @@ const typeDefs = `#graphql
         Admin can edit everyone (Requires admin Role)
         """
         adminEditFriend(input: FriendEditInput): Friend
+       
+
+       """
+       Adds the users position
+       """
+       addPosition(input: PositionInput): Boolean!
+
+
+        """
+        Find friends nearby
+        """
+        nearbyFriends(input: PositionInput, distance:Float):[Position]!
+
        
     }
 `;

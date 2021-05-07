@@ -7,5 +7,5 @@ export interface IPoint {
 
 export interface IGeoPolygon {
     type: "Polygon",
-    coordinates: Position[][][]
+    coordinates: Position[][]
 }

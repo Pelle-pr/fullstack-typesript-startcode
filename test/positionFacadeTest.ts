@@ -44,7 +44,7 @@ describe("## Verify the Positions Facade ##", () => {
         const positions = [
             positionCreator(12.48, 55.77, f1.email, f1.firstName + " " + f1.lastName, true),
             positionCreator(12.48, getLatitudeInside(55.77, DIST_TO_SEARCH), f2.email, f2.firstName + " " + f2.lastName, true),
-            positionCreator(12.58, getLatitudeOutside(55.77, DIST_TO_SEARCH), f3.email, f3.firstName + " " + f3.lastName, true),
+            positionCreator(12.48, getLatitudeOutside(55.77, DIST_TO_SEARCH), f3.email, f3.firstName + " " + f3.lastName, true),
         ]
         await positionCollection.insertMany(positions)
 
@@ -55,6 +55,7 @@ describe("## Verify the Positions Facade ##", () => {
             const result = await positionFacade.addOrUpdatePosition("pp@b.dk", 2, 3)
             expect(result.name).to.be.equal("Peter Pan")
             expect(result.location.coordinates[0]).to.be.equal(2)
+            expect(result.location.coordinates[1]).to.be.equal(3)
         })
     })
 
@@ -62,20 +63,21 @@ describe("## Verify the Positions Facade ##", () => {
     describe("Verify the addOrUpdatePosition method", () => {
         it("It should not update XXXX@b.dk's position document", async () => {
             await expect(positionFacade.addOrUpdatePosition("XXXX@b.dk", 2, 3)).to.be.rejectedWith(ApiError)
+
         })
     })
 
     describe("Verify the findNearbyFriends method", () => {
-        it("Should Not find ", async () => {
-            const result = await positionFacade.findNearbyFriends("pp@b.dk", "secret", 12.48, 55.77, DIST_TO_SEARCH)
+        it("Should find Donald Duck", async () => {
+            const result = await positionFacade.findNearbyFriends("pp@b.dk", 12.48, 55.77, DIST_TO_SEARCH)
             expect(result.length).to.be.equal(1)
             expect(result[0].name).to.be.equal("Donald Duck")
         })
     })
 
     describe("Verify the findNearbyFriends method", () => {
-        xit("Should Not find xxxxxxxx@b.dk", async () => {
-            await expect(positionFacade.findNearbyFriends("xxxxxxxx@b.dk", "secret", 12.48, 55.77, DIST_TO_SEARCH)).to.be.rejectedWith(ApiError)
+        it("Should Not find xxxxxxxx@b.dk", async () => {
+            await expect(positionFacade.findNearbyFriends("xxxxxx@b.dk", 12.48, 55.77, DIST_TO_SEARCH)).to.be.rejectedWith(ApiError)
         })
     })
 

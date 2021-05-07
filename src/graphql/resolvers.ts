@@ -3,11 +3,19 @@ import { IFriend } from '../interfaces/IFriend';
 import { ApiError } from '../errors/apiError';
 import { Request } from "express";
 import fetch from "node-fetch"
+import PositionFacade from '../facade/positionFacade';
+
 
 
 
 let friendFacade: FriendFacade;
+let positionFacade: PositionFacade;
 
+interface IPositionInput {
+    email: string
+    longitude: number
+    latitude: number
+}
 /*
 We don't have access to app or the Router so we need to set up the facade in another way
 In www.ts IMPORT and CALL the method below, like so: 
@@ -17,6 +25,9 @@ Just before the line where you start the server
 export function setupFacade(db: any) {
     if (!friendFacade) {
         friendFacade = new FriendFacade(db)
+    }
+    if (!positionFacade) {
+        positionFacade = new PositionFacade(db)
     }
 }
 
@@ -58,6 +69,9 @@ export const resolvers = {
             }
 
             return friendFacade.getFriendFromId(id)
+        },
+        getGameArea: async (root: object, _: any, context: any) => {
+            return positionFacade.getGameArea()
         },
 
 
@@ -103,6 +117,24 @@ export const resolvers = {
             }
 
             return friendFacade.editFriend(input.email, input)
+        },
+        addPosition: async (_: object, { input }: { input: IPositionInput }, context: any) => {
+
+            // if (!context.credentials) {
+            //     throw new ApiError("Not Authorized", 401)
+            // }
+            try {
+                positionFacade.addOrUpdatePosition(input.email, input.longitude, input.latitude)
+                return true
+            } catch (err) {
+                return false
+            }
+        },
+        nearbyFriends: async (_: object, { input, distance }: { input: IPositionInput, distance: number }) => {
+
+
+            const res = await positionFacade.findNearbyFriends(input.email, input.longitude, input.latitude, distance)
+            return res
         }
-    },
+    }
 };

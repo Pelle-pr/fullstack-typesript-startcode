@@ -111,7 +111,12 @@ class FriendsFacade {
 
 
   async getFriendFromEmail(friendEmail: string): Promise<IFriend> {
-    return this.findOne({ email: friendEmail })
+    try {
+      return this.findOne({ email: friendEmail })
+    } catch (err) {
+      console.log("hej")
+      throw new ApiError(err)
+    }
   }
 
 

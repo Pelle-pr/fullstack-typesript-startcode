@@ -5,7 +5,10 @@ import IPosition from '../interfaces/IPosition'
 import FriendsFacade from './friendFacade';
 import { DbConnector } from "../config/dbConnector"
 import { ApiError } from "../errors/apiError";
-import { number } from "joi";
+import { IFriend } from "../interfaces/IFriend";
+import { IGeoPolygon } from "../interfaces/IGeo";
+import { gameArea } from "../utils/gameArea"
+
 
 class PositionFacade {
     db: Db
@@ -19,37 +22,53 @@ class PositionFacade {
     }
 
     async addOrUpdatePosition(email: string, longitude: number, latitude: number): Promise<IPosition> {
-        const newLocation = { type: "Point", coordinates: [longitude, latitude] }
+        try {
+            const findFriend: IFriend = await this.friendFacade.getFriendFromEmail(email)
+            const fullName = findFriend.firstName + " " + findFriend.lastName
 
-        const res = await this.positionCollection.findOneAndUpdate(
-            { email },
-            { $set: { location: newLocation } },
-            {
-                returnOriginal: false
-            })
-        if (!res.value) {
-            throw new ApiError("User email not found", 404)
+            const newPosition: IPosition = { lastUpdated: new Date(), email, name: fullName, location: { type: "Point", coordinates: [longitude, latitude] } }
+
+            const query = { email }
+            const update = { $set: { ...newPosition } }
+            const options = { upsert: true, returnOriginal: false }
+
+            const res = await this.positionCollection.findOneAndUpdate(query, update, options)
+
+            return res.value
+        } catch (err) {
+            throw new ApiError(err)
         }
-
-        return res.value
     }
 
-    async findNearbyFriends(email: string, password: string, longitude: number, latitude: number, distance: number): Promise<Array<IPosition>> {
+    async findNearbyFriends(email: string, longitude: number, latitude: number, distance: number): Promise<Array<IPosition>> {
 
-        const res = await this.positionCollection.aggregate([
-            {
-                $geoNear: {
-                    near: { type: "Point", coordinates: [longitude, latitude] },
-                    distanceField: "dist.calculated",
-                    maxDistance: distance,
-                    includeLocs: "dist.location",
-                    spherical: true
+        const verifyFriend = await this.friendFacade.getFriendFromEmail(email)
+
+        if (verifyFriend === null) {
+            throw new ApiError("Not authorized", 401)
+        }
+
+        await this.addOrUpdatePosition(email, longitude, latitude)
+
+        const res = await this.positionCollection.find({
+            email: { $ne: email },
+            location: {
+                $near: {
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [longitude, latitude]
+                    },
+                    $maxDistance: distance
                 }
             }
-        ]).toArray()
+        }).toArray()
 
-        return res.filter(user => user.email !== email)
+        return res
 
+    }
+
+    async getGameArea(): Promise<IGeoPolygon> {
+        return gameArea
     }
 
     async getAllPositions(): Promise<Array<IPosition>> {
