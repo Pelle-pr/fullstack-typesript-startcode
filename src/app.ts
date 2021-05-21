@@ -74,6 +74,47 @@ app.use("/api", (req, res, next) => {
   });
 });
 
+
+
+// For my react native app
+
+import PositionFacade from "./facade/positionFacade"
+import IPosition from "./interfaces/IPosition"
+let facade: PositionFacade
+
+app.post("/friends", async (req, res, next) => {
+
+  try {
+    if (!facade) {
+      const db = req.app.get("db")
+      facade = new PositionFacade(db)
+    }
+    const { email, password, longitude, latitude, distance } = req.body;
+    const friends = await facade.findNearbyFriends(email, password, longitude, latitude, distance)
+    const friendsReturned = friends.map((f: IPosition) => {
+      return { email: f.email, name: f.name, longitude: f.location.coordinates[0], latitude: f.location.coordinates[1] }
+    })
+    res.json(friendsReturned)
+  }
+  catch (err) {
+    if (err instanceof ApiError) {
+      return next(err);
+    }
+    next(new ApiError(err.message, 400));
+  }
+})
+
+app.get("/gamearea", async (req, res) => {
+
+  if (!facade) {
+    const db = req.app.get("db")
+    facade = new PositionFacade(db)
+  }
+  const gameArea = await facade.getGameArea()
+  res.json(gameArea)
+})
+
+
 app.use((err: any, req: any, res: any, next: Function) => {
   if (err instanceof ApiError) {
     res.status(err.errorCode).send({ msg: err.message, code: err.errorCode });
@@ -81,7 +122,6 @@ app.use((err: any, req: any, res: any, next: Function) => {
     next(err);
   }
 });
-
 
 
 export default app;

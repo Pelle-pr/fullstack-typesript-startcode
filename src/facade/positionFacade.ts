@@ -40,7 +40,7 @@ class PositionFacade {
         }
     }
 
-    async findNearbyFriends(email: string, longitude: number, latitude: number, distance: number): Promise<Array<IPosition>> {
+    async findNearbyFriends(email: string, password: string, longitude: number, latitude: number, distance: number): Promise<Array<IPosition>> {
 
         const verifyFriend = await this.friendFacade.getFriendFromEmail(email)
 

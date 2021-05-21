@@ -13,6 +13,7 @@ let positionFacade: PositionFacade;
 
 interface IPositionInput {
     email: string
+    password: string
     longitude: number
     latitude: number
 }
@@ -133,7 +134,7 @@ export const resolvers = {
         nearbyFriends: async (_: object, { input, distance }: { input: IPositionInput, distance: number }) => {
 
 
-            const res = await positionFacade.findNearbyFriends(input.email, input.longitude, input.latitude, distance)
+            const res = await positionFacade.findNearbyFriends(input.email, input.password, input.longitude, input.latitude, distance)
             return res
         }
     }

@@ -69,7 +69,7 @@ describe("## Verify the Positions Facade ##", () => {
 
     describe("Verify the findNearbyFriends method", () => {
         it("Should find Donald Duck", async () => {
-            const result = await positionFacade.findNearbyFriends("pp@b.dk", 12.48, 55.77, DIST_TO_SEARCH)
+            const result = await positionFacade.findNearbyFriends("pp@b.dk", "secret", 12.48, 55.77, DIST_TO_SEARCH)
             expect(result.length).to.be.equal(1)
             expect(result[0].name).to.be.equal("Donald Duck")
         })
@@ -77,7 +77,7 @@ describe("## Verify the Positions Facade ##", () => {
 
     describe("Verify the findNearbyFriends method", () => {
         it("Should Not find xxxxxxxx@b.dk", async () => {
-            await expect(positionFacade.findNearbyFriends("xxxxxx@b.dk", 12.48, 55.77, DIST_TO_SEARCH)).to.be.rejectedWith(ApiError)
+            await expect(positionFacade.findNearbyFriends("xxxxxx@b.dk", "xxx", 12.48, 55.77, DIST_TO_SEARCH)).to.be.rejectedWith(ApiError)
         })
     })
 

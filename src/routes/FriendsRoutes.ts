@@ -10,9 +10,9 @@ let facade: FriendFacade;
 
 // Initialize facade using the database set on the application object
 router.use(async (req, res, next) => {
+  debug("Database used: " + req.app.get("db-type"));
   if (!facade) {
     const db = req.app.get("db");
-    debug("Database used: " + req.app.get("db-type"));
     facade = new FriendFacade(db);
   }
   next();
@@ -34,7 +34,7 @@ router.post("/", async function (req, res, next) {
   }
 });
 
-// ALL ENDPOINTS BELOW REQUIRES AUTHENTICATION
+
 
 router.post("/login", async (req, res, next) => {
 
@@ -46,6 +46,8 @@ router.post("/login", async (req, res, next) => {
   const base64AuthString = "Basic " + base64.encode(userName + ":" + password)
   res.json({ base64AuthString, user: user.email, role: user.role })
 })
+
+// ALL ENDPOINTS BELOW REQUIRES AUTHENTICATION
 
 import authMiddleware from "../middleware/basic-auth";
 router.use(authMiddleware);

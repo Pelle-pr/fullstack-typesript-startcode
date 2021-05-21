@@ -82,6 +82,7 @@ const typeDefs = `#graphql
     }
     input PositionInput {
         email: String!
+        password: String!
         longitude: Float!
         latitude: Float!
     }
