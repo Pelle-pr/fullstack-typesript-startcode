@@ -39,6 +39,7 @@ describe("## Verify the Positions Facade ##", () => {
         const f3 = { firstName: "Peter", lastName: "Admin", email: "peter@admin.dk", password: hashedPW, role: "admin" }
 
         const status = await friendsCollection.insertMany([f1, f2, f3])
+
         await positionCollection.deleteMany({});
 
         const positions = [

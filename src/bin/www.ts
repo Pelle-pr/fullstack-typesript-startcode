@@ -16,6 +16,8 @@ const PORT = process.env.PORT || 3333;
       .get("logger")
       .log("info", `Connection to ${process.env.DB_NAME} established`);
 
+    debug(`Connection to ${process.env.DB_NAME} established`)
+
     app.set("db", db);
     app.set("db-type", "REAL");
 
