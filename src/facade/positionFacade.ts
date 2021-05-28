@@ -3,7 +3,6 @@ require('dotenv').config({ path: path.join(__dirname, "..", "..", '.env') })
 import { Db, Collection, ObjectID } from "mongodb";
 import IPosition from '../interfaces/IPosition'
 import FriendsFacade from './friendFacade';
-import { DbConnector } from "../config/dbConnector"
 import { ApiError } from "../errors/apiError";
 import { IFriend } from "../interfaces/IFriend";
 import { IGeoPolygon } from "../interfaces/IGeo";
@@ -67,6 +66,18 @@ class PositionFacade {
 
     }
 
+    async findFriendPositionByEmail(email: string) {
+
+        const res = await this.positionCollection.findOne({ email })
+
+        if (res === null) {
+            throw new ApiError("Not found", 404)
+        }
+
+        return res
+
+    }
+
     async getGameArea(): Promise<IGeoPolygon> {
         return gameArea
     }
@@ -80,12 +91,3 @@ class PositionFacade {
 
 export default PositionFacade;
 
-async function tester() {
-    const client = await DbConnector.connect()
-    const db = client.db(process.env.DB_NAME)
-    const positionFacade = new PositionFacade(db)
-    await positionFacade.addOrUpdatePosition("pp@b.dk", 5, 5)
-    process.exit(0)
-}
-
-//tester()

@@ -39,7 +39,7 @@ import { graphqlHTTP } from 'express-graphql';
 import { schema } from './graphql/schema';
 
 import authMiddleware from "./middleware/basic-auth";
-import { assertWrappingType } from "graphql";
+
 
 
 
@@ -112,6 +112,24 @@ app.get("/gamearea", async (req, res) => {
   }
   const gameArea = await facade.getGameArea()
   res.json(gameArea)
+})
+
+app.get("/:email", async (req, res, next) => {
+  try {
+    if (!facade) {
+      const db = req.app.get("db")
+      facade = new PositionFacade(db)
+    }
+
+    const friend = await facade.findFriendPositionByEmail(req.params.email)
+
+    res.json(friend)
+  } catch (err) {
+    if (err instanceof ApiError) {
+      return next(err);
+    }
+    next(new ApiError(err.message, 400))
+  };
 })
 
 
