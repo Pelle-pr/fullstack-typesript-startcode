@@ -46,7 +46,7 @@ export const resolvers = {
 
         },
 
-        getFriend: (root: any, _: any, context: any) => {
+        getFriend: async (root: any, _: any, context: any) => {
             if (!context.credentials) {
                 throw new ApiError("Not Authorized", 401)
             }
@@ -54,14 +54,23 @@ export const resolvers = {
             return friendFacade.getFriendFromEmail(context.credentials.email)
         },
 
+        // Errors with GraphQL
 
         getFriendByEmail: async (_: object, { email }: { email: string }, context: any) => {
 
             if (!context.credentials || context.credentials.role !== "admin") {
-                throw new ApiError("Not Authorized", 401)
+                return { __typename: "Error", msg: "Not authorized", code: 401 }
             }
+            try {
+                const friend: IFriend = await friendFacade.getFriendFromEmail(email)
 
-            return friendFacade.getFriendFromEmail(email)
+                return { __typename: "Friend", ...friend }
+
+            } catch (error) {
+                if (error instanceof ApiError) {
+                    return { __typename: "Error", msg: "Friend not found", code: 404 }
+                }
+            }
         },
         getFriendById: async (_: object, { id }: { id: string }, context: any) => {
 
@@ -133,8 +142,8 @@ export const resolvers = {
         },
         nearbyFriends: async (_: object, { input, distance }: { input: IPositionInput, distance: number }) => {
 
-
             const res = await positionFacade.findNearbyFriends(input.email, input.password, input.longitude, input.latitude, distance)
+
             return res
         }
     }

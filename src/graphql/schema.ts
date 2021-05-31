@@ -26,6 +26,13 @@ const typeDefs = `#graphql
         coordinates: [[[Float]]]
     }
 
+    union FoundUserByEmail = Friend | Error
+        
+    type Error {
+        msg: String!
+        code: Int!
+    } 
+
  
     """
     Queries available for Friends
@@ -54,7 +61,7 @@ const typeDefs = `#graphql
         """
         Get Friend by Email (Requires admin role)
         """
-        getFriendByEmail (email : String!) : Friend
+        getFriendByEmail (email : String!) : FoundUserByEmail
 
         """
         Get Friend by ID (Requires admin role)
@@ -67,6 +74,7 @@ const typeDefs = `#graphql
         getGameArea: GameArea
         
     }
+
     input FriendInput {
         ID: String
         firstName: String!

@@ -5,11 +5,7 @@ import Friendfacade from "../facade/friendFacade";
 
 let facade: Friendfacade;
 
-const authMiddleware = async function (
-  req: Request,
-  res: Response,
-  next: Function
-) {
+const authMiddleware = async function (req: Request, res: Response, next: Function) {
   if (!facade) {
     facade = new Friendfacade(req.app.get("db"));
   }
